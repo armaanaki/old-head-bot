@@ -99,6 +99,11 @@ func define(word string) string {
     log.Fatalln(err)
   }
 
+  // if json is empty, return a different string
+  if len(definitions.List) == 0 {
+    return "Congrats man, I literally have no idea what `" + word + "` is."
+  }
+
   // get definition and example but remove brackets
   def := strings.ReplaceAll(definitions.List[0].Definition, "[", "")
   def = strings.ReplaceAll(def, "]", "")
