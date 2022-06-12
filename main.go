@@ -12,6 +12,7 @@ import (
   "encoding/json"
   "github.com/bwmarrin/discordgo"
   "fmt"
+  "sort"
 )
 
 var (
@@ -82,6 +83,7 @@ type UrbanDictList struct {
 type UrbanDictDefinition struct {
   Definition string
   Example string
+  Thumbs_up int
 }
 
 // find and return the definition from urban dictionary
@@ -104,12 +106,22 @@ func define(word string) string {
     return "Congrats man, I literally have no idea what `" + word + "` is."
   }
 
+  // sort array by the thumbs 
+  sort.Slice(definitions.List, func(i, j int) bool {
+    return definitions.List[i].Thumbs_up > definitions.List[j].Thumbs_up
+  })
+
   // get definition and example but remove brackets
   def := strings.ReplaceAll(definitions.List[0].Definition, "[", "")
   def = strings.ReplaceAll(def, "]", "")
 
   ex := strings.ReplaceAll(definitions.List[0].Example, "[", "")
   ex = strings.ReplaceAll(ex, "]", "")
+
+  // return formatted string with no example if not found
+  if len(ex) == 0 {
+    return fmt.Sprintf("I gotchu fam.\n\n**Definition:**\n```text\n%s\n```", def)
+  }
 
   // return formatted string
   return fmt.Sprintf("I gotchu fam.\n\n**Definition:**\n```text\n%s\n```\n**Example:**\n```text\n%s\n```", def, ex)
